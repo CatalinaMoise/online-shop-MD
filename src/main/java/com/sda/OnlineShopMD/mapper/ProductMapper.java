@@ -15,4 +15,15 @@ public class ProductMapper {
                 .units(Integer.valueOf(productDto.getUnits()))
                 .build();
     }
+    public ProductDto map(Product product){
+
+        return ProductDto.builder()
+                .productId(String.valueOf(product.getId()))
+                .price(String.valueOf(product.getPrice()))
+                .description(product.getDescription())
+                .name(product.getName())
+                .category(product.getCategory())
+                .units(String.valueOf(product.getUnits()))
+                .build();
+    }
 }

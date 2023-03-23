@@ -7,8 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import com.sda.OnlineShopMD.service.ProductService;
+
+import java.util.List;
 
 
 @Controller // ca sa adaugam controller in Spring
@@ -34,7 +37,18 @@ private ProductService productService;
         return "redirect:/addProduct";
     }
 
-    @GetMapping("/homePage") public String homeGet(){
+    @GetMapping("/homePage")
+    public String homeGet(Model model){
+
+       List<ProductDto> productDtoList = productService.getAllProductDtoList();
+        model.addAttribute("productDtoList", productDtoList);
+           System.out.println(productDtoList);
         return "homePage";
     }
+    @GetMapping("/product/{productId}")  //am adaugat id, pentru a avea un url cu id pentru fiecare produs, ca in productdto si productmapper
+    public String viewProductGet(Model model, @PathVariable(value="productId") String productId){
+        System.out.println("am dat click pe produsul cu id-ul"+ productId);
+        return "viewProduct";
+    }
+
 }
