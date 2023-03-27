@@ -5,13 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import com.sda.OnlineShopMD.service.ProductService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Controller // ca sa adaugam controller in Spring
@@ -30,10 +29,10 @@ private ProductService productService;
         return "addProduct";
     }
     @PostMapping("/addProduct")
-    public String addProductPost(@ModelAttribute ProductDto productDto){
+    public String addProductPost(@ModelAttribute ProductDto productDto, @RequestParam("productImg") MultipartFile multipartFile){
         System.out.println(productDto);
         log.info("hello!");
-        productService.create(productDto);
+        productService.create(productDto, multipartFile);
         return "redirect:/addProduct";
     }
 
@@ -48,7 +47,19 @@ private ProductService productService;
     @GetMapping("/product/{productId}")  //am adaugat id, pentru a avea un url cu id pentru fiecare produs, ca in productdto si productmapper
     public String viewProductGet(Model model, @PathVariable(value="productId") String productId){
         System.out.println("am dat click pe produsul cu id-ul"+ productId);
+        Optional<ProductDto> optionalProductDto = productService.getProductDtoById(productId);
+        if(optionalProductDto.isEmpty()){
+            return "error";
+        }
+        model.addAttribute("productDto", optionalProductDto.get());
         return "viewProduct";
     }
-
+    @GetMapping  ("/register")
+    public String registerGet(){
+        return "register";
+    }
+    @GetMapping("/login")
+    public String loginGet(){
+        return "login";
+    }
 }
