@@ -1,10 +1,15 @@
 package com.sda.OnlineShopMD.controller;
 
 import com.sda.OnlineShopMD.dto.ProductDto;
+import com.sda.OnlineShopMD.dto.UserAccountDTO;
+import com.sda.OnlineShopMD.dto.UserAccountDTO;
+import com.sda.OnlineShopMD.service.UserAccountService;
+import com.sda.OnlineShopMD.validator.UserAccountValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import com.sda.OnlineShopMD.service.ProductService;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +23,12 @@ import java.util.Optional;
 public class MainController {
 @Autowired
 private ProductService productService;
+@Autowired
+private UserAccountService userAccountService;
+
+@Autowired
+private UserAccountValidator userAccountValidator;
+
     @GetMapping("/addProduct")
     public String addProductGet(Model model) {
         //aici implementam fancy business logic
@@ -55,11 +66,25 @@ private ProductService productService;
         return "viewProduct";
     }
     @GetMapping  ("/register")
-    public String registerGet(){
+    public String registerGet(Model model){
+        UserAccountDTO userAccountDTO = new UserAccountDTO();
+        model.addAttribute("userAccountDTO", userAccountDTO);
+
         return "register";
     }
+
+    @PostMapping("/register")
+    public String registerPost(@ModelAttribute UserAccountDTO userAccountDTO, BindingResult bindingResult){
+        System.out.println(userAccountDTO);
+        userAccountValidator.validate(userAccountDTO, bindingResult);
+        if(bindingResult.hasErrors()){
+            return "register";
+        }
+        userAccountService.addUserAccount(userAccountDTO);
+        return "redirect:/login";
+    }
     @GetMapping("/login")
-    public String loginGet(){
+    public String loginGet(Model model){
         return "login";
     }
 }
