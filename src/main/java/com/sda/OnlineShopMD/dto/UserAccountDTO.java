@@ -9,4 +9,5 @@ public class UserAccountDTO {
     private String address;
     private String email;
     private String password;
+    private String userRole;
 }

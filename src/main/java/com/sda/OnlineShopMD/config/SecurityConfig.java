@@ -17,7 +17,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/register").permitAll();   //permite accesul in pagina - pot sa il pun si la alte pagini
-
+            auth.requestMatchers("/homePage").hasAnyRole("SELLER", "BUYER"); //daca nu esti nici buyer nici seller, nu ai voie sa intri
+            auth.requestMatchers("/addProduct").hasRole("SELLER");
+            auth.requestMatchers("/product/*").hasAnyRole("SELLER", "BUYER");
+            auth.requestMatchers("/cart").hasRole("BUYER");
         }).httpBasic();
         httpSecurity.csrf().disable()
                 .authorizeHttpRequests()

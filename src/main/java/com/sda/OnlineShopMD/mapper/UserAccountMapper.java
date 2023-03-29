@@ -2,6 +2,7 @@ package com.sda.OnlineShopMD.mapper;
 
 import com.sda.OnlineShopMD.dto.UserAccountDTO;
 import com.sda.OnlineShopMD.entities.UserAccount;
+import com.sda.OnlineShopMD.enums.UserRole;
 import com.sda.OnlineShopMD.service.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +20,7 @@ public class UserAccountMapper {
                 .address(userAccountDTO.getAddress())
                 .fullName(userAccountDTO.getFullName())
                 .password(bCryptPasswordEncoder.encode(userAccountDTO.getPassword()))
+                .userRole(UserRole.valueOf(userAccountDTO.getUserRole()))
                 .build();
     }
 }
