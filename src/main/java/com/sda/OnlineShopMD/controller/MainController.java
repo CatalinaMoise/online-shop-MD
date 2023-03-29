@@ -1,12 +1,14 @@
 package com.sda.OnlineShopMD.controller;
 
 import com.sda.OnlineShopMD.dto.ProductDto;
+import com.sda.OnlineShopMD.dto.ProductQuantityDto;
 import com.sda.OnlineShopMD.dto.UserAccountDTO;
 import com.sda.OnlineShopMD.dto.UserAccountDTO;
 import com.sda.OnlineShopMD.service.UserAccountService;
 import com.sda.OnlineShopMD.validator.UserAccountValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -63,7 +65,18 @@ private UserAccountValidator userAccountValidator;
             return "error";
         }
         model.addAttribute("productDto", optionalProductDto.get());
+        ProductQuantityDto productQuantityDto = new ProductQuantityDto();
+        model.addAttribute("productQuantityDto", productQuantityDto);
         return "viewProduct";
+    }
+    @PostMapping("/product/{productId}")
+    public String addToCartPost(@ModelAttribute ProductQuantityDto productQuantityDto,
+                                @PathVariable(value="productId") String productId, Authentication authentication){ //authentification - sa stim cine a adaugat in cart
+        System.out.println(productQuantityDto);
+        System.out.println("productId este " + productId);
+        System.out.println(authentication.getName());
+
+        return "redirect:/product/" + productId;
     }
     @GetMapping  ("/register")
     public String registerGet(Model model){
@@ -87,4 +100,13 @@ private UserAccountValidator userAccountValidator;
     public String loginGet(Model model){
         return "login";
     }
+
+
 }
+
+
+
+
+
+
+
