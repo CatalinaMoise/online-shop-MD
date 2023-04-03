@@ -4,6 +4,7 @@ import com.sda.OnlineShopMD.dto.ProductDto;
 import com.sda.OnlineShopMD.dto.ProductQuantityDto;
 import com.sda.OnlineShopMD.dto.UserAccountDTO;
 import com.sda.OnlineShopMD.dto.UserAccountDTO;
+import com.sda.OnlineShopMD.service.CartService;
 import com.sda.OnlineShopMD.service.UserAccountService;
 import com.sda.OnlineShopMD.validator.UserAccountValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,9 @@ private UserAccountService userAccountService;
 
 @Autowired
 private UserAccountValidator userAccountValidator;
+private CartService cartService;
+private String id;
+
 
     @GetMapping("/addProduct")
     public String addProductGet(Model model) {
@@ -75,6 +79,7 @@ private UserAccountValidator userAccountValidator;
         System.out.println(productQuantityDto);
         System.out.println("productId este " + productId);
         System.out.println(authentication.getName());
+        cartService.addToCart(id, productQuantityDto, authentication.getName());
 
         return "redirect:/product/" + productId;
     }
@@ -100,8 +105,10 @@ private UserAccountValidator userAccountValidator;
     public String loginGet(Model model){
         return "login";
     }
-
-
+    @GetMapping("/checkout")
+    public String checkoutGet(){
+        return "checkout";
+    }
 }
 
 

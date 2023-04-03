@@ -1,6 +1,7 @@
 package com.sda.OnlineShopMD.mapper;
 
 import com.sda.OnlineShopMD.dto.UserAccountDTO;
+import com.sda.OnlineShopMD.entities.Cart;
 import com.sda.OnlineShopMD.entities.UserAccount;
 import com.sda.OnlineShopMD.enums.UserRole;
 import com.sda.OnlineShopMD.service.UserAccountService;
@@ -21,6 +22,7 @@ public class UserAccountMapper {
                 .fullName(userAccountDTO.getFullName())
                 .password(bCryptPasswordEncoder.encode(userAccountDTO.getPassword()))
                 .userRole(UserRole.valueOf(userAccountDTO.getUserRole()))
+                .cart(new Cart())
                 .build();
     }
 }
