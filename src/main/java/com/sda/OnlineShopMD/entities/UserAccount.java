@@ -24,4 +24,8 @@ public class UserAccount {
     private String password;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @OneToOne( cascade = CascadeType.ALL) //daca vezi ca oriectu card nu e salvat in bd, sa il salveze
+    @JoinColumn
+    private Cart cart;   // si in clasa cart am specificat un userAccount, si relatia de one to one cu cart
 }
