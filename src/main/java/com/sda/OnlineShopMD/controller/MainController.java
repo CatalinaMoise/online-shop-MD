@@ -1,13 +1,12 @@
 package com.sda.OnlineShopMD.controller;
 
-import com.sda.OnlineShopMD.dto.ProductDto;
-import com.sda.OnlineShopMD.dto.ProductQuantityDto;
-import com.sda.OnlineShopMD.dto.UserAccountDTO;
+import com.sda.OnlineShopMD.dto.*;
 import com.sda.OnlineShopMD.dto.UserAccountDTO;
 import com.sda.OnlineShopMD.service.CartService;
 import com.sda.OnlineShopMD.service.UserAccountService;
 import com.sda.OnlineShopMD.validator.UserAccountValidator;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.DialectOverride;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import com.sda.OnlineShopMD.service.ProductService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +31,8 @@ private UserAccountService userAccountService;
 
 @Autowired
 private UserAccountValidator userAccountValidator;
+@Autowired
 private CartService cartService;
-private String id;
 
 
     @GetMapping("/addProduct")
@@ -79,7 +79,7 @@ private String id;
         System.out.println(productQuantityDto);
         System.out.println("productId este " + productId);
         System.out.println(authentication.getName());
-        cartService.addToCart(id, productQuantityDto, authentication.getName());
+        cartService.addToCart(productId, productQuantityDto, authentication.getName());
 
         return "redirect:/product/" + productId;
     }
@@ -106,7 +106,27 @@ private String id;
         return "login";
     }
     @GetMapping("/checkout")
-    public String checkoutGet(){
+    public String checkoutGet(Model model, Authentication authentication){
+//        CheckoutDto checkoutDto = CheckoutDto.builder()
+//                .total("455")
+//                .shippingFee("9")
+//                .subtotal("446")
+//                .productCheckoutDtoList(Arrays.asList(
+//                        ProductCheckoutDto.builder()
+//                                .name("prune")
+//                                .quantity("23")
+//                                .price("3")
+//                                .total("69")
+//                                .build(),
+//                        ProductCheckoutDto.builder()
+//                                .name("mere")
+//                                .quantity("30")
+//                                .price("2")
+//                                .total("60")
+//                                .build()
+//                )).build();
+        CheckoutDto checkoutDto = cartService.getCheckoutDtoByUserEmail(authentication.getName());
+        model.addAttribute("checkoutDto", checkoutDto);
         return "checkout";
     }
 }
