@@ -14,6 +14,7 @@ public class ProductDto {
     private String price;
     private String category;
     private String units;
+    @ToString.Exclude
     private String img;
 
 

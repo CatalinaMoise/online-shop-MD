@@ -3,6 +3,7 @@ package com.sda.OnlineShopMD.controller;
 import com.sda.OnlineShopMD.dto.*;
 import com.sda.OnlineShopMD.dto.UserAccountDTO;
 import com.sda.OnlineShopMD.service.CartService;
+import com.sda.OnlineShopMD.service.OrderService;
 import com.sda.OnlineShopMD.service.UserAccountService;
 import com.sda.OnlineShopMD.validator.UserAccountValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -24,15 +25,18 @@ import java.util.Optional;
 @Controller // ca sa adaugam controller in Spring
 @Slf4j
 public class MainController {
-@Autowired
-private ProductService productService;
-@Autowired
-private UserAccountService userAccountService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private UserAccountService userAccountService;
 
-@Autowired
-private UserAccountValidator userAccountValidator;
-@Autowired
-private CartService cartService;
+    @Autowired
+    private UserAccountValidator userAccountValidator;
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private OrderService orderService;
 
 
     @GetMapping("/addProduct")
@@ -45,8 +49,9 @@ private CartService cartService;
 
         return "addProduct";
     }
+
     @PostMapping("/addProduct")
-    public String addProductPost(@ModelAttribute ProductDto productDto, @RequestParam("productImg") MultipartFile multipartFile){
+    public String addProductPost(@ModelAttribute ProductDto productDto, @RequestParam("productImg") MultipartFile multipartFile) {
         System.out.println(productDto);
         log.info("hello!");
         productService.create(productDto, multipartFile);
@@ -54,18 +59,20 @@ private CartService cartService;
     }
 
     @GetMapping("/homePage")
-    public String homeGet(Model model){
+    public String homeGet(Model model) {
 
-       List<ProductDto> productDtoList = productService.getAllProductDtoList();
+        List<ProductDto> productDtoList = productService.getAllProductDtoList();
         model.addAttribute("productDtoList", productDtoList);
-           System.out.println(productDtoList);
+        System.out.println(productDtoList);
         return "homePage";
     }
-    @GetMapping("/product/{productId}")  //am adaugat id, pentru a avea un url cu id pentru fiecare produs, ca in productdto si productmapper
-    public String viewProductGet(Model model, @PathVariable(value="productId") String productId){
-        System.out.println("am dat click pe produsul cu id-ul"+ productId);
+
+    @GetMapping("/product/{productId}")
+    //am adaugat id, pentru a avea un url cu id pentru fiecare produs, ca in productdto si productmapper
+    public String viewProductGet(Model model, @PathVariable(value = "productId") String productId) {
+        System.out.println("am dat click pe produsul cu id-ul" + productId);
         Optional<ProductDto> optionalProductDto = productService.getProductDtoById(productId);
-        if(optionalProductDto.isEmpty()){
+        if (optionalProductDto.isEmpty()) {
             return "error";
         }
         model.addAttribute("productDto", optionalProductDto.get());
@@ -73,9 +80,10 @@ private CartService cartService;
         model.addAttribute("productQuantityDto", productQuantityDto);
         return "viewProduct";
     }
+
     @PostMapping("/product/{productId}")
     public String addToCartPost(@ModelAttribute ProductQuantityDto productQuantityDto,
-                                @PathVariable(value="productId") String productId, Authentication authentication){ //authentification - sa stim cine a adaugat in cart
+                                @PathVariable(value = "productId") String productId, Authentication authentication) { //authentification - sa stim cine a adaugat in cart
         System.out.println(productQuantityDto);
         System.out.println("productId este " + productId);
         System.out.println(authentication.getName());
@@ -83,8 +91,9 @@ private CartService cartService;
 
         return "redirect:/product/" + productId;
     }
-    @GetMapping  ("/register")
-    public String registerGet(Model model){
+
+    @GetMapping("/register")
+    public String registerGet(Model model) {
         UserAccountDTO userAccountDTO = new UserAccountDTO();
         model.addAttribute("userAccountDTO", userAccountDTO);
 
@@ -92,21 +101,23 @@ private CartService cartService;
     }
 
     @PostMapping("/register")
-    public String registerPost(@ModelAttribute UserAccountDTO userAccountDTO, BindingResult bindingResult){
+    public String registerPost(@ModelAttribute UserAccountDTO userAccountDTO, BindingResult bindingResult) {
         System.out.println(userAccountDTO);
         userAccountValidator.validate(userAccountDTO, bindingResult);
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             return "register";
         }
         userAccountService.addUserAccount(userAccountDTO);
         return "redirect:/login";
     }
+
     @GetMapping("/login")
-    public String loginGet(Model model){
+    public String loginGet(Model model) {
         return "login";
     }
+
     @GetMapping("/checkout")
-    public String checkoutGet(Model model, Authentication authentication){
+    public String checkoutGet(Model model, Authentication authentication) {
 //        CheckoutDto checkoutDto = CheckoutDto.builder()
 //                .total("455")
 //                .shippingFee("9")
@@ -129,7 +140,21 @@ private CartService cartService;
         model.addAttribute("checkoutDto", checkoutDto);
         return "checkout";
     }
+
+    @GetMapping("/confirmation")
+    public String confirmationGet() {
+        return "error";
+    }
+
+    @PostMapping("/confirmation")
+    public String confirmationPost(Model model, Authentication authentication) {
+        orderService.placeOrder(authentication.getName());
+        CheckoutDto checkoutDto = cartService.getCheckoutDtoByUserEmail(authentication.getName());
+        model.addAttribute("checkoutDto", checkoutDto);
+        return "confirmation";
+    }
 }
+
 
 
 

@@ -1,0 +1,11 @@
+
+p {
+    font-size: 30px;
+    background: -webkit-linear-gradient(#9E4784, #0E8388);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h4{
+
+}
