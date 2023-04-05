@@ -22,5 +22,9 @@ public class CartEntry {
     private Product product;
     private Integer quantity;
 
+    @ManyToOne
+    @JoinColumn
+    private Order order; // si acum, un cart entry apartine de un order
+
 }
 
